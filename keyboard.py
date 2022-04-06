@@ -4,9 +4,10 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMar
 
 def menu():
     download_button = KeyboardButton('Скачать видео с ютуба')
+    download_button2 = KeyboardButton('Скачать все видео с канала ютуба')
     backup_button = KeyboardButton('Вернуться в главное меню')
     menu_kb = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-    menu_kb.add(download_button, backup_button)
+    menu_kb.add(download_button, download_button2, backup_button)
     return menu_kb
 
 
@@ -17,8 +18,15 @@ def help():
     return menu_kb
 
 
-def again():
-    download_button = KeyboardButton('Ещё')
+def again_video():
+    download_button = KeyboardButton('Ещё видео')
+    backup_button = KeyboardButton('Вернуться в главное меню')
+    menu_kb = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+    menu_kb.add(download_button, backup_button)
+    return menu_kb
+
+def again_channel():
+    download_button = KeyboardButton('Ещё видео')
     backup_button = KeyboardButton('Вернуться в главное меню')
     menu_kb = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     menu_kb.add(download_button, backup_button)
@@ -52,4 +60,14 @@ def make_keyboards_with_video_settings(url):
     inline_keyboard1.add(button5)
     inline_keyboard1.add(button6)
     inline_keyboard1.add(button7)
+    return inline_keyboard1
+
+
+def make_keyboards_with_channel_video():
+    inline_keyboard1 = InlineKeyboardMarkup()
+    button = InlineKeyboardButton('Получить видео', callback_data="all_video_channel")
+    button2 = InlineKeyboardButton('Отмена', callback_data=f'cancel')
+    inline_keyboard1.add(button)
+    inline_keyboard1.add(button2)
+
     return inline_keyboard1

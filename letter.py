@@ -1,11 +1,12 @@
 class Menu():
-    start_with = 'https://www.youtube.com/watch?v='
+    start_with = 'https://www.youtube.com/'
     start_message = 'Привет, я помогу тебе скачать видео с YouTube.'
 
     start_hi = 'Привет! Ваше имя добавленно в базу данных! Напишите или кликните на /help , ' \
                'чтобы увидеть мои комманды!'
     get_url = ' Введи ссылку на видео: '
     get_back = 'Ты вернулся в главное меню.'
+    get_url_channel = ' Введи ссылку на канал, зайдя на вкладку "Видео" '
 
     helps = "Данный бот поможет вам скачать видео с платформы ютуб в лучшем качестве." \
             " Загрузить на сервер само видео, загрузить видео без звука - гифку, или, " \
@@ -14,6 +15,7 @@ class Menu():
             "/download - запускает Бота.\n\n" \
             "/start - поздаровайся со мной)\n\n\n" \
             "Спасибо, что пользуетесь услугами этого бота!"
+    get_back_all_video ='Вот ваше видео: ↑'
 
     def get_back_video(self):
         return f'Вот ваше видео: ↑'
@@ -30,5 +32,5 @@ class Menu():
 
 class Errors():
     critical_error = 'Ссылка неверная, либо видео не найдено. ' \
-                     'Введи ссылку в формате: ```https://www.youtube.com/watch?v=...```'
-    url_error = 'Введи ссылку в формате: ```https://www.youtube.com/watch?v=...```'
+                     'Введи ссылку в формате: ```https://www.youtube.com/...```'
+    url_error = 'Введи ссылку в формате: ```https://www.youtube.com/...```'
