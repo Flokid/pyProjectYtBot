@@ -26,7 +26,7 @@ def again_video():
     return menu_kb
 
 def again_channel():
-    download_button = KeyboardButton('Ещё видео')
+    download_button = KeyboardButton('Ещё канал')
     backup_button = KeyboardButton('Вернуться в главное меню')
     menu_kb = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     menu_kb.add(download_button, backup_button)

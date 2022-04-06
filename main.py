@@ -12,7 +12,8 @@ from pytube import YouTube
 
 import letter
 from Download_with_different_resolutions import download_vid, download_vid_only_audio
-from keyboard import menu, back, make_keyboards_with_video_settings, again_video, again_channel, help, make_keyboards_with_channel_video
+from keyboard import menu, back, make_keyboards_with_video_settings, again_video, again_channel, help, \
+    make_keyboards_with_channel_video
 from parsing_yt_channel import parse_channel
 
 # ссылка на бота -    https://t.me/Sown_bot
@@ -165,15 +166,15 @@ async def edit_name(message: types.Message, state: FSMContext):
                         link = str(line)
                         yt = YouTube(link)
                         streams = yt.streams
-                        video_best = streams.order_by('resolution').asc().first()
+                        video_best = streams.order_by('resolution').desc().first()
 
                         try:
                             video_best.download(save_path)
                             vv = video_best.title
                             res = video_best.subtype
                             buff_list.append(str(vv + "." + res))
-                            print(buff_list)
-                            print(len(buff_list))
+                            # print(buff_list)
+                            # print(len(buff_list))
                         except:
                             print("error")
 
@@ -307,8 +308,18 @@ async def handler_call(call: types.CallbackQuery, state: FSMContext):
                                    reply_markup=again_video())
     elif call.data.startswith('all_video_channel'):
         await bot.delete_message(call.message.chat.id, call.message.message_id)
-        for i in range (len(buff_list)):
+
+        for i in range(len(buff_list)):
+
+            list = ["?", "`", ",", "/", "'", "*", "."]
             file_name = buff_list[i]
+            file_res = file_name.split(".")[-1]
+
+            for element in list:
+                file_name = file_name.replace(element, "")
+            file_name = file_name.replace(file_res, "." + file_res)
+            print(file_name)
+
             with open(file_name, "rb") as file:
                 spot = await bot.send_document(chat_id, file)
                 print(spot.message_id)
@@ -324,4 +335,5 @@ async def handler_call(call: types.CallbackQuery, state: FSMContext):
 
 if __name__ == "__main__":
     # Запускаем бота
+
     executor.start_polling(dp, skip_updates=True)
