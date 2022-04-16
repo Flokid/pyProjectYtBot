@@ -2,6 +2,7 @@ import asyncio
 import datetime
 import os
 
+import yadisk
 from aiogram import Bot, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import Dispatcher, FSMContext
@@ -14,10 +15,12 @@ from Info import Info
 from atribute_getter import AttGetter as ag
 from db_worker import DBWorker as dbworker
 from keyboard import menu, back, make_keyboards_with_video_settings, again_video, again_channel, help, \
-    make_keyboards_with_channel_video
+    make_keyboards_with_channel_video, upload, make_keyboards_with_channel_video_to_upload_in_yadisk, upload2
 from parsing_yt_channel import parse_channel
 
 # ссылка на бота -    https://t.me/Sown_bot
+# https://gist.github.com/1234ru/142fcc7edeb5038d49f35356a27e15ec -гайд на получение токена
+# yd token = AQAAAABExh04AAfVlKHE0l2NZUWGn6kQHiQHPhc
 
 bot = Bot(token='5271444163:AAF-RK_WlKJLaPfC_iZfHPpPi8HPQZNpdak')
 dp = Dispatcher(bot, storage=MemoryStorage())
@@ -26,6 +29,8 @@ db = dbworker(bot)
 buff_list = []
 dt_now = datetime.datetime.now().replace(microsecond=0)
 loop = asyncio.get_event_loop()
+
+buff_yandex_token = []
 
 
 @dp.message_handler(commands=['start'])
@@ -50,6 +55,28 @@ async def start_command(message: types.Message):
 
 
 @dp.message_handler(text='Скачать все видео с канала ютуба')
+async def save_video(message: types.Message):
+    await bot.send_message(chat_id=message.chat.id, text=letter.Menu.decide, reply_markup=upload())
+    # await Info.channel.set()
+
+
+@dp.message_handler(text='Загрузить в яндекс диск')
+async def save_video(message: types.Message):
+    await bot.send_message(chat_id=message.chat.id, text=letter.Menu.get_token, reply_markup=back())
+    await Info.answer.set()
+    # buff_yandex_token = message.text
+    # print(buff_yandex_token)
+    # await bot.send_message(chat_id=message.chat.id, text=letter.Menu.get_url_channel, reply_markup=back())
+    # await Info.channel.set()
+
+
+@dp.message_handler(text='Дать ссылку на канал')
+async def save_video(message: types.Message):
+    await bot.send_message(chat_id=message.chat.id, text=letter.Menu.get_url_channel, reply_markup=back())
+    print(buff_yandex_token)
+    await Info.channel_yadisk.set()
+
+@dp.message_handler(text='Загрузить в тг')
 async def save_video(message: types.Message):
     await bot.send_message(chat_id=message.chat.id, text=letter.Menu.get_url_channel, reply_markup=back())
     await Info.channel.set()
@@ -76,6 +103,91 @@ async def save_video(message: types.Message):
 async def save_video(message: types.Message):
     await bot.send_message(chat_id=message.chat.id, text=letter.Menu.get_url_channel, reply_markup=back())
     await Info.channel.set()
+
+
+@dp.message_handler(state=Info.answer, content_types=types.ContentTypes.TEXT)
+async def edit_name(message: types.Message, state: FSMContext):
+    if message.text.lower() == 'отмена':
+        await bot.send_message(chat_id=message.chat.id, text=letter.Menu.helps)
+        await state.finish()
+    else:
+        buff_yandex_token.append(message.text)
+        print(buff_yandex_token)
+        try:
+            await bot.send_message(chat_id=message.chat.id,
+                                   text="токен получен!",
+                                   reply_markup=upload2())
+            await state.finish()
+        except OSError:
+            await bot.send_message(chat_id=message.chat.id,
+                                   text=letter.Errors.critical_error,
+                                   reply_markup=back(), parse_mode="MarkdownV2")
+            await state.finish()
+        except ValueError:
+            await bot.send_message(chat_id=message.chat.id,
+                                   text=letter.Errors.critical_error,
+                                   reply_markup=back(), parse_mode="MarkdownV2")
+            await state.finish()
+
+
+@dp.message_handler(state=Info.channel_yadisk, content_types=types.ContentTypes.TEXT)
+async def edit_name(message: types.Message, state: FSMContext):
+    if message.text.lower() == 'отмена':
+        await bot.send_message(chat_id=message.chat.id, text=letter.Menu.helps)
+        await state.finish()
+    else:
+        if message.text.startswith(letter.Menu.start_with):
+            try:
+
+                channel_url = message.text
+                await loop.create_task(download_channel_video(channel_url))
+                if message.from_user.id == '/download':
+                    start_download()
+                # th = Thread(target=download_channel_video(channel_url))
+                # th.start()
+                #
+                # print('next')
+
+                # await parse_channel(channel_url)
+                # f = open("video_channel.txt")
+                # with open("video_channel.txt") as file:
+                #     for line in file:
+                #         save_path = "C:/Users/Floki/Desktop/pyProject"
+                #         link = str(line)
+                #         yt = YouTube(link)
+                #         streams = yt.streams
+                #         video_best = streams.order_by('resolution').asc().first()
+                #
+                #         try:
+                #             video_best.download(save_path)
+                #             vv = video_best.title
+                #             res = video_best.subtype
+                #             buff_list.append(str(vv + "." + res))
+                #             # print(buff_list)
+                #             # print(len(buff_list))
+                #         except:
+                #             print("error")
+
+                await bot.send_message(chat_id=message.chat.id,
+                                       text="Видео загружены!",
+                                       reply_markup=make_keyboards_with_channel_video_to_upload_in_yadisk())
+                await state.finish()
+            except OSError:
+                await bot.send_message(chat_id=message.chat.id,
+                                       text=letter.Errors.critical_error,
+                                       reply_markup=back(), parse_mode="MarkdownV2")
+                await state.finish()
+            except ValueError:
+                await bot.send_message(chat_id=message.chat.id,
+                                       text=letter.Errors.critical_error,
+                                       reply_markup=back(), parse_mode="MarkdownV2")
+                await state.finish()
+
+        else:
+            await bot.send_message(chat_id=message.chat.id,
+                                   text=letter.Errors.url_error,
+                                   reply_markup=back(), parse_mode="MarkdownV2")
+            await state.finish()
 
 
 @dp.message_handler(state=Info.channel, content_types=types.ContentTypes.TEXT)
@@ -179,6 +291,7 @@ async def handler_call(call: types.CallbackQuery, state: FSMContext):
         video_url = ag.get_url(call.data)
         download_link = ag.get_download_url_with_audio(video_url)
         file_name = download_vid(download_link, ag.get_title(video_url))
+        print(buff_yandex_token)
         with open(file_name, "rb") as file:
             spot = await bot.send_document(chat_id, file)
             print(spot.message_id)
@@ -264,6 +377,28 @@ async def handler_call(call: types.CallbackQuery, state: FSMContext):
                 os.remove(file_name)
                 await bot.send_message(chat_id=chat_id, text=letter.Menu.get_back_all_video,
                                        reply_markup=again_channel())
+    elif call.data.startswith('upload_all_channel_video_in_yadisk'):
+        await bot.delete_message(call.message.chat.id, call.message.message_id)
+        for i in range(len(buff_list)):
+
+            list = ["?", "`", ",", "/", "'", "*", ".", "%", "#", "!"]
+            file_name = buff_list[i]
+            file_res = file_name.split(".")[-1]
+
+            for element in list:
+                file_name = file_name.replace(element, "")
+            file_name = file_name.replace(file_res, "." + file_res)
+            print(file_name)
+        with open(file_name, "rb") as file:
+            # spot = await bot.send_document(chat_id, file)
+            # print(spot.message_id)
+            # os.remove(file_name)
+            y = yadisk.YaDisk(token=buff_yandex_token[0])
+            print(y.check_token())
+            await y.upload(file, file)
+            buff_yandex_token.remove(0)
+            await bot.send_message(chat_id=chat_id, text=letter.Menu.get_back_all_video,
+                                   reply_markup=again_channel())
 
 
     elif call.data == 'cancel':

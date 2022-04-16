@@ -25,6 +25,7 @@ def again_video():
     menu_kb.add(download_button, backup_button)
     return menu_kb
 
+
 def again_channel():
     download_button = KeyboardButton('Ещё канал')
     backup_button = KeyboardButton('Вернуться в главное меню')
@@ -37,6 +38,22 @@ def back():
     button_back = KeyboardButton('Отмена')
     back_keyboard = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     back_keyboard.add(button_back)
+    return back_keyboard
+
+def upload2():
+    button_back = KeyboardButton('Отмена')
+    button_download = KeyboardButton('Дать ссылку на канал')
+    back_keyboard = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+    back_keyboard.add(button_download, button_back)
+    return back_keyboard
+
+
+def upload():
+    button_back = KeyboardButton('Загрузить в яндекс диск')
+    button_back1 = KeyboardButton('Загрузить в тг')
+    button_back2 = KeyboardButton('Отмена')
+    back_keyboard = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+    back_keyboard.add(button_back, button_back1, button_back2)
     return back_keyboard
 
 
@@ -71,3 +88,13 @@ def make_keyboards_with_channel_video():
     inline_keyboard1.add(button2)
 
     return inline_keyboard1
+
+def make_keyboards_with_channel_video_to_upload_in_yadisk():
+    inline_keyboard1 = InlineKeyboardMarkup()
+    button = InlineKeyboardButton('Загрузить видео в яндекс диск', callback_data="upload_all_channel_video_in_yadisk")
+    button2 = InlineKeyboardButton('Отмена', callback_data=f'cancel')
+    inline_keyboard1.add(button)
+    inline_keyboard1.add(button2)
+
+    return inline_keyboard1
+
