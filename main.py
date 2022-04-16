@@ -20,7 +20,6 @@ from parsing_yt_channel import parse_channel
 
 # ссылка на бота -    https://t.me/Sown_bot
 # https://gist.github.com/1234ru/142fcc7edeb5038d49f35356a27e15ec -гайд на получение токена
-# yd token = AQAAAABExh04AAfVlKHE0l2NZUWGn6kQHiQHPhc
 
 bot = Bot(token='5271444163:AAF-RK_WlKJLaPfC_iZfHPpPi8HPQZNpdak')
 dp = Dispatcher(bot, storage=MemoryStorage())
@@ -143,31 +142,6 @@ async def edit_name(message: types.Message, state: FSMContext):
                 await loop.create_task(download_channel_video(channel_url))
                 if message.from_user.id == '/download':
                     start_download()
-                # th = Thread(target=download_channel_video(channel_url))
-                # th.start()
-                #
-                # print('next')
-
-                # await parse_channel(channel_url)
-                # f = open("video_channel.txt")
-                # with open("video_channel.txt") as file:
-                #     for line in file:
-                #         save_path = "C:/Users/Floki/Desktop/pyProject"
-                #         link = str(line)
-                #         yt = YouTube(link)
-                #         streams = yt.streams
-                #         video_best = streams.order_by('resolution').asc().first()
-                #
-                #         try:
-                #             video_best.download(save_path)
-                #             vv = video_best.title
-                #             res = video_best.subtype
-                #             buff_list.append(str(vv + "." + res))
-                #             # print(buff_list)
-                #             # print(len(buff_list))
-                #         except:
-                #             print("error")
-
                 await bot.send_message(chat_id=message.chat.id,
                                        text="Видео загружены!",
                                        reply_markup=make_keyboards_with_channel_video_to_upload_in_yadisk())
