@@ -364,6 +364,7 @@ async def handler_call(call: types.CallbackQuery, state: FSMContext):
             file_name = file_name.replace(file_res, "." + file_res)
             buff_list_yandex_video.append(file_name)
             print(file_name)
+
             with open(file_name, "rb") as file:
                 # spot = await bot.send_document(chat_id, file)
                 # print(spot.message_id)
