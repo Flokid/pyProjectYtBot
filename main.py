@@ -373,7 +373,7 @@ async def handler_call(call: types.CallbackQuery, state: FSMContext):
                 print(y.check_token())
                 y.upload(file, f"/{file}")
             os.remove(file_name)
-            await bot.send_message(chat_id=chat_id, text=letter.Menu.get_back_all_video,
+            await bot.send_message(chat_id=chat_id, text=letter.Menu.get_back_all_video_in_yasisk,
                                    reply_markup=again_channel())
 
 
